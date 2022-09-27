@@ -110,6 +110,8 @@ qtr_id  total_sales
 
 select country, sum(sales) as total_sales from sales_order_orc group by country order by total_sales asc limit 1 union all select count
 _u1.country     _u1.total_sales
+Ireland         57756.43029785156
+USA             3627982.825744629
 
 
 6. Calculate quartelry sales for each city:
