@@ -1,0 +1,115 @@
+This is a real time dataset of the ineuron technical consultant team. You have to perform hive analysis on this given dataset.
+-------------------------------------------------------------------------------------------------------------------------------
+
+Download Dataset 1 - https://drive.google.com/file/d/1WrG-9qv6atP-W3P_-gYln1hHyFKRKMHP/view
+
+Download Dataset 2 - https://drive.google.com/file/d/1-JIPCZ34dyN6k9CqJa-Y8yxIGq6vTVXU/view
+---------------------------------------------------------------------------------------------
+
+# Move data file from windows to cloudera using filezilla
+
+# Create a directory in hdfs and move data to directory
+  	hadoop fs -mkdir /pathak
+	hadoop fs -put pathak_data/AgentLogingReport.csv /pathak
+	hadoop fs -put pathak_data/AgentPerformance.csv /pathak
+
+# Create database
+	create database pathak_project1;
+	use pathak_project1;
+
+# Ceate table for Dataset 1
+    create table agent_login_data
+     (
+     sl_no int,
+     agent string,
+     date string,
+     login_time string,
+     logout_time string,
+     duration string
+     )
+     row format delimited
+     fields terminated by ',';
+     
+# Create table for Dataset 2 
+	create table agent_performance
+      (
+      sl_no int,
+      date string,
+      agent_name,
+      total_chats int,
+      average_response string,
+      average_resolution string,
+      average_rating float,
+      total_feedback int
+      )
+      row format delimited 
+      fields terminated by ',';
+     
+# Load dataset in relevant table
+	load data inpath '/tmp/pathak/AgentLogingReport.csv' into table agent_login_data;
+	load data inpath '/tmp/pathak/AgentPerformance.csv' into table agent_performance;
+
+# Queries Tasks:
+---------------------
+
+1. List of all agents' names. 
+     select
+     agent
+     from agent_login_data;
+
+2. Find out agent average rating.
+     select
+     agent_name,
+     avg(average_rating) as av_rating
+     from agent_performance
+     group by agent_name;
+
+3. Total working days for each agents 
+     select
+     agent,
+     count(date) as total_working_day
+     from agent_login_data
+     group by agent
+     order by total_working_day;
+
+4. Total query that each agent have taken
+     select
+     agent_name,
+     count(total_chats) as total_query
+     from agent_performance
+     group by agent_name;
+     
+5. Total Feedback that each agent have received 
+      select
+      agent_name,
+      total_feedback
+      from agent_perfomance;
+  
+6. Agent name who have average rating between 3.5 to 4 
+	    select
+	    agent_name
+	    from agent_performance
+	    where average_rating BETWEEN 3.5 AND 4;  
+  
+7. Agent name who have rating less than 3.5 
+     select
+     agent_name,
+     average_rating
+     from agent_performance
+     where average_rating < 3.5;
+
+         
+8. Agent name who have rating more than 4.5   
+     select
+     agent_name,
+     average_rating
+     from agent_performance
+     where average_rating > 4.5;
+
+9. How many feedback agents have received more than 4.5 average
+	  select
+	  agent_name,
+	  count(total_feedback) as total_feedbacks_count
+	  from agent_performance
+	  where average_rating > 4.5
+	  group by agent_name;
